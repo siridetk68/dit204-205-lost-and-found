@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import AdminUserManager from '@/components/AdminUserManager';
 import {
   Database,
   Server,
@@ -273,6 +274,13 @@ export default function DatabasePage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <a
+              href="#user-management"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 transition-colors whitespace-nowrap"
+            >
+              <Users className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+              <span>จัดการผู้ใช้</span>
+            </a>
             <Link
               href="/project"
               className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition-colors whitespace-nowrap"
@@ -728,16 +736,19 @@ export default function DatabasePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-              <div className="flex items-center justify-between text-xs font-bold text-slate-700">
+            <a
+              href="#user-management"
+              className="p-4 rounded-xl bg-purple-50/70 border border-purple-200 hover:bg-purple-100/70 transition-colors block"
+            >
+              <div className="flex items-center justify-between text-xs font-bold text-purple-900">
                 <span>1. บัญชีผู้ใช้ (users)</span>
-                <Users className="w-4 h-4 text-blue-600" />
+                <Users className="w-4 h-4 text-purple-600" />
               </div>
-              <div className="text-2xl font-black text-slate-900 mt-2">{analytics.totalUsers} บัญชี</div>
-              <div className="text-[11px] text-slate-500 mt-1">
-                นศ. {analytics.roleCounts.student} • Staff {analytics.roleCounts.staff} • Admin {analytics.roleCounts.admin}
+              <div className="text-2xl font-black text-purple-900 mt-2">{analytics.totalUsers} บัญชี</div>
+              <div className="text-[11px] text-purple-800 mt-1">
+                นศ. {analytics.roleCounts.student} • Staff {analytics.roleCounts.staff} • Admin {analytics.roleCounts.admin} • จัดการ →
               </div>
-            </div>
+            </a>
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
               <div className="flex items-center justify-between text-xs font-bold text-slate-700">
@@ -846,6 +857,8 @@ export default function DatabasePage() {
             </div>
           </div>
         </section>
+        {/* Section 4: Admin User Management (Username / Password / Role) */}
+        <AdminUserManager currentUser={currentUser} onUsersChanged={fetchDatabase} />
       </main>
 
       {/* Academic Citation Footer */}

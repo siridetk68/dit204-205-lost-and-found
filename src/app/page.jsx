@@ -9,7 +9,6 @@ import ReportModal from '@/components/ReportModal';
 import ClaimModal from '@/components/ClaimModal';
 import DetailModal from '@/components/DetailModal';
 import StaffClaimReviewModal from '@/components/StaffClaimReviewModal';
-import ReviewSection from '@/components/ReviewSection';
 import { INITIAL_ITEMS, INITIAL_CLAIMS } from '@/data/initialItems';
 import { ShieldCheck } from 'lucide-react';
 
@@ -404,9 +403,6 @@ export default function Home() {
           }}
           onDeleteItem={handleDeleteItem}
         />
-
-        {/* 4. User Reviews & Satisfaction Feedback (เก็บคอมเม้นและรีวิวลง TiDB จริง) */}
-        <ReviewSection currentUser={currentUser} />
 
       </main>
 

@@ -117,12 +117,12 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
                 Browse
               </button>
 
-              <button
-                onClick={() => onScrollToSection('reviews-section')}
+              <a
+                href="/reviews"
                 className="px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-amber-600 hover:bg-amber-50/70 transition-all whitespace-nowrap"
               >
                 ⭐ รีวิว &amp; ประเมิน
-              </button>
+              </a>
 
               {/* เมนูเฉพาะ Admin: สถิติ TiDB และ โครงงาน/Test Cases */}
               {currentUser.role === 'admin' && (
@@ -331,15 +331,13 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
           >
             Browse Items
           </button>
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              onScrollToSection('reviews-section');
-            }}
-            className="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100"
+          <a
+            href="/reviews"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block w-full text-left px-3 py-2 rounded-lg text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100"
           >
             ⭐ รีวิว &amp; ประเมินความพึงพอใจ
-          </button>
+          </a>
           <button
             onClick={() => {
               setMobileMenuOpen(false);

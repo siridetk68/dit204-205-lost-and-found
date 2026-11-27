@@ -880,3 +880,197 @@ export async function deleteDbReview(id) {
   }
   return await getDbReviews();
 }
+
+// ========================================================
+// Admin User Management (TiDB Table: users)
+// ========================================================
+export function normalizeAdminUserRow(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    studentId: row.student_id ?? row.studentId ?? '',
+    name: row.name || '',
+    email: row.email || '',
+    password: row.password_hash ?? row.password ?? '',
+    role: row.role || 'student',
+    faculty: row.faculty || 'วิทยาลัยนวัตกรรมดิจิทัลเทคโนโลยี',
+    major: row.major || '',
+    phone: row.phone || '',
+    createdAt: formatDateTimeValue(row.created_at ?? row.createdAt),
+  };
+}
+
+export async function getDbUsers() {
+  const p = getTiDbPool();
+  if (p) {
+    try {
+      const [rows] = await p.query(
+        'SELECT id, student_id, name, email, password_hash, role, faculty, major, phone, created_at FROM users ORDER BY id ASC'
+      );
+      return (rows || []).map(normalizeAdminUserRow);
+    } catch (err) {
+      console.warn('TiDB getDbUsers fallback:', err.message);
+    }
+  }
+  return (mockDb.users || []).map(normalizeAdminUserRow);
+}
+
+export async function createDbUser({ studentId, name, email, password, role, faculty, major, phone }) {
+  const cleanId = String(studentId || '').trim();
+  const cleanName = String(name || '').trim();
+  const cleanPass = String(password || '').trim();
+  const cleanRole = ['student', 'staff', 'admin'].includes(role) ? role : 'student';
+  const cleanEmail = String(email || '').trim() || `${cleanId}@rsu.ac.th`;
+  const cleanFaculty = String(faculty || '').trim() || 'วิทยาลัยนวัตกรรมดิจิทัลเทคโนโลยี';
+  const cleanMajor = String(major || '').trim() || 'สาขาวิชา DIT';
+  const cleanPhone = String(phone || '').trim() || null;
+
+  let insertedId = Date.now();
+  const p = getTiDbPool();
+  if (p) {
+    const [existing] = await p.query(
+      'SELECT id FROM users WHERE student_id = ? OR email = ? LIMIT 1',
+      [cleanId, cleanEmail]
+    );
+    if (existing && existing.length > 0) {
+      throw new Error('Username หรือ Email นี้มีอยู่ในระบบแล้ว');
+    }
+
+    const [res] = await p.query(
+      `INSERT INTO users (student_id, name, email, password_hash, role, faculty, major, phone)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [cleanId, cleanName, cleanEmail, cleanPass, cleanRole, cleanFaculty, cleanMajor, cleanPhone]
+    );
+    if (res?.insertId) insertedId = res.insertId;
+  } else {
+    const dup = mockDb.users.find((u) => u.student_id === cleanId || u.email === cleanEmail);
+    if (dup) {
+      throw new Error('Username หรือ Email นี้มีอยู่ในระบบแล้ว');
+    }
+  }
+
+  const newRow = {
+    id: insertedId,
+    student_id: cleanId,
+    name: cleanName,
+    email: cleanEmail,
+    password_hash: cleanPass,
+    role: cleanRole,
+    faculty: cleanFaculty,
+    major: cleanMajor,
+    phone: cleanPhone,
+    created_at: new Date().toISOString().replace('T', ' ').slice(0, 19),
+  };
+  mockDb.users.push(newRow);
+
+  return {
+    user: normalizeAdminUserRow(newRow),
+    users: await getDbUsers(),
+  };
+}
+
+export async function updateDbUser(id, updates) {
+  const userId = Number(id);
+  const fields = [];
+  const values = [];
+
+  const cleanId = updates.studentId !== undefined ? String(updates.studentId).trim() : undefined;
+  const cleanName = updates.name !== undefined ? String(updates.name).trim() : undefined;
+  const cleanEmail = updates.email !== undefined ? String(updates.email).trim() : undefined;
+  const cleanPass = updates.password !== undefined ? String(updates.password).trim() : undefined;
+  const cleanRole =
+    updates.role !== undefined && ['student', 'staff', 'admin'].includes(updates.role)
+      ? updates.role
+      : undefined;
+  const cleanMajor = updates.major !== undefined ? String(updates.major).trim() : undefined;
+  const cleanPhone = updates.phone !== undefined ? String(updates.phone).trim() : undefined;
+
+  if (cleanId) {
+    fields.push('student_id = ?');
+    values.push(cleanId);
+  }
+  if (cleanName) {
+    fields.push('name = ?');
+    values.push(cleanName);
+  }
+  if (cleanEmail) {
+    fields.push('email = ?');
+    values.push(cleanEmail);
+  }
+  if (cleanPass) {
+    fields.push('password_hash = ?');
+    values.push(cleanPass);
+  }
+  if (cleanRole) {
+    fields.push('role = ?');
+    values.push(cleanRole);
+  }
+  if (cleanMajor !== undefined) {
+    fields.push('major = ?');
+    values.push(cleanMajor);
+  }
+  if (cleanPhone !== undefined) {
+    fields.push('phone = ?');
+    values.push(cleanPhone || null);
+  }
+
+  const p = getTiDbPool();
+  if (p && fields.length > 0) {
+    if (cleanId || cleanEmail) {
+      const [dup] = await p.query(
+        'SELECT id FROM users WHERE (student_id = ? OR email = ?) AND id != ? LIMIT 1',
+        [cleanId || '', cleanEmail || '', userId]
+      );
+      if (dup && dup.length > 0) {
+        throw new Error('Username หรือ Email นี้ถูกใช้โดยบัญชีอื่นแล้ว');
+      }
+    }
+    values.push(userId);
+    await p.query(`UPDATE users SET ${fields.join(', ')} WHERE id = ?`, values);
+  }
+
+  const idx = mockDb.users.findIndex((u) => String(u.id) === String(id));
+  if (idx !== -1) {
+    mockDb.users[idx] = {
+      ...mockDb.users[idx],
+      ...(cleanId ? { student_id: cleanId } : {}),
+      ...(cleanName ? { name: cleanName } : {}),
+      ...(cleanEmail ? { email: cleanEmail } : {}),
+      ...(cleanPass ? { password_hash: cleanPass } : {}),
+      ...(cleanRole ? { role: cleanRole } : {}),
+      ...(cleanMajor !== undefined ? { major: cleanMajor } : {}),
+      ...(cleanPhone !== undefined ? { phone: cleanPhone } : {}),
+    };
+  }
+
+  const users = await getDbUsers();
+  return {
+    user: users.find((u) => String(u.id) === String(id)) || null,
+    users,
+  };
+}
+
+export async function deleteDbUser(id) {
+  const userId = Number(id);
+  const currentUsers = await getDbUsers();
+  const target = currentUsers.find((u) => String(u.id) === String(id));
+  if (!target) {
+    throw new Error('ไม่พบบัญชีผู้ใช้นี้ในระบบ');
+  }
+  if (target.role === 'admin') {
+    const adminCount = currentUsers.filter((u) => u.role === 'admin').length;
+    if (adminCount <= 1) {
+      throw new Error('ไม่สามารถลบบัญชี Admin คนสุดท้ายของระบบได้');
+    }
+  }
+
+  const p = getTiDbPool();
+  if (p) {
+    await p.query('DELETE FROM users WHERE id = ?', [userId]);
+  }
+  mockDb.users = mockDb.users.filter((u) => String(u.id) !== String(id));
+
+  return {
+    users: await getDbUsers(),
+  };
+}

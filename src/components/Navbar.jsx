@@ -1,0 +1,309 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { Search, PlusCircle, Menu, X, ShieldCheck, GraduationCap, ChevronDown, LogOut, UserCheck } from 'lucide-react';
+import { STUDENT_PROFILE } from '@/data/initialItems';
+
+export default function Navbar({ onOpenReport, onScrollToSection, activeTab, setActiveTab }) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  // Dynamic user state loaded from localStorage (synced with /login)
+  const [currentUser, setCurrentUser] = useState({
+    name: STUDENT_PROFILE.name,
+    studentId: STUDENT_PROFILE.studentId,
+    role: 'student',
+    roleName: 'นักศึกษา (Student)',
+    badge: `รหัส ${STUDENT_PROFILE.studentId} • DIT RSU`,
+    initials: 'สิ',
+    faculty: STUDENT_PROFILE.faculty,
+    major: STUDENT_PROFILE.major,
+    color: 'from-sky-500 to-blue-700'
+  });
+
+  useEffect(() => {
+    const loadUser = () => {
+      try {
+        if (typeof window !== 'undefined') {
+          const saved = localStorage.getItem('lost_found_user');
+          if (saved) {
+            const u = JSON.parse(saved);
+            setCurrentUser(u);
+          }
+        }
+      } catch (e) {
+        console.warn('Could not read user from localStorage:', e);
+      }
+    };
+
+    loadUser();
+    window.addEventListener('storage', loadUser);
+    return () => window.removeEventListener('storage', loadUser);
+  }, []);
+
+  const handleLogout = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('lost_found_user');
+      window.location.href = '/login';
+    }
+  };
+
+  return (
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 md:h-18">
+          
+          {/* 1. Left: Logo & Search Icon */}
+          <div className="flex items-center gap-3 shrink-0">
+            <button 
+              onClick={() => { setActiveTab('all'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="flex items-center gap-2.5 group text-left focus:outline-none"
+            >
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform shrink-0">
+                <Search className="w-5 h-5 stroke-[2.5]" />
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1.5 whitespace-nowrap">
+                  <span className="font-extrabold text-lg tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
+                    Lost & Found
+                  </span>
+                  <span className="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 rounded-md border border-blue-200">
+                    IT DEPT
+                  </span>
+                </div>
+                <span className="text-[11px] text-slate-500 font-medium whitespace-nowrap hidden sm:inline-block">
+                  วิทยาลัยนวัตกรรมดิจิทัลฯ ม.รังสิต
+                </span>
+              </div>
+            </button>
+          </div>
+
+          {/* 2. Center: Menu Links (Balanced spacing, single-line text, no awkward wrapping) */}
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+            <button
+              onClick={() => {
+                setActiveTab('all');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                activeTab === 'all'
+                  ? 'text-blue-600 bg-blue-50 font-bold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              Home
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveTab('browse');
+                onScrollToSection('items-feed');
+              }}
+              className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                activeTab === 'browse'
+                  ? 'text-blue-600 bg-blue-50 font-bold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              Browse Items
+            </button>
+
+            <button
+              onClick={onOpenReport}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition-all whitespace-nowrap"
+            >
+              <PlusCircle className="w-4 h-4 text-blue-600" />
+              <span>Report Found Item</span>
+            </button>
+
+            <button
+              onClick={() => onScrollToSection('project-info')}
+              className="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all whitespace-nowrap"
+            >
+              ข้อมูลวิชา DIT204
+            </button>
+
+            {/* สถิติและฐานข้อมูล TiDB: แสดงเฉพาะ Admin เท่านั้น (ซ่อนจาก Student และ Staff) */}
+            {currentUser.role === 'admin' && (
+              <a
+                href="/database"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 transition-all whitespace-nowrap border border-sky-200"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>สถิติ &amp; ระบบ TiDB</span>
+              </a>
+            )}
+
+            {/* ป้ายสิทธิ์เฉพาะของ Staff */}
+            {currentUser.role === 'staff' && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+                <span>โหมดอาจารย์/เจ้าหน้าที่</span>
+              </span>
+            )}
+
+            {/* ป้ายสิทธิ์เฉพาะของ Admin */}
+            {currentUser.role === 'admin' && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200">
+                <span className="w-2 h-2 rounded-full bg-purple-600 animate-ping"></span>
+                <span>ระบบ Admin Console</span>
+              </span>
+            )}
+          </nav>
+
+          {/* 3. Right: Action Button & Student Profile Badge */}
+          <div className="flex items-center gap-3 shrink-0">
+            {/* CTA Button */}
+            <button
+              onClick={onOpenReport}
+              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm hover:shadow transition-all whitespace-nowrap shrink-0"
+            >
+              <PlusCircle className="w-4 h-4" />
+              <span>โพสต์ประกาศ</span>
+            </button>
+
+            {/* User Profile Badge (Dynamic Role) */}
+            <div className="relative">
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="flex items-center gap-2.5 p-1.5 sm:px-3 sm:py-1.5 rounded-xl border border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/20 shrink-0"
+                title={`โปรไฟล์: ${currentUser.name}`}
+              >
+                <div className="relative shrink-0">
+                  <div className={`w-8 h-8 rounded-full bg-gradient-to-tr ${currentUser.color || 'from-sky-500 to-blue-700'} text-white font-bold text-xs flex items-center justify-center shadow-inner`}>
+                    {currentUser.initials || currentUser.name?.slice(0, 2) || 'สิ'}
+                  </div>
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+                </div>
+                <div className="text-left hidden sm:block whitespace-nowrap">
+                  <div className="text-xs font-bold text-slate-800 leading-tight">
+                    {currentUser.name}
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[11px] text-slate-500 leading-tight mt-0.5">
+                    <span>{currentUser.badge || `รหัส ${currentUser.studentId} • DIT RSU`}</span>
+                  </div>
+                </div>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
+              </button>
+
+              {/* Profile Dropdown */}
+              {showProfileMenu && (
+                <div 
+                  className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 p-4 z-50 text-slate-800 animate-fadeIn"
+                  onClick={() => setShowProfileMenu(false)}
+                >
+                  <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                    <div className={`w-11 h-11 rounded-full bg-gradient-to-tr ${currentUser.color || 'from-blue-600 to-blue-800'} text-white font-bold text-sm flex items-center justify-center shadow shrink-0`}>
+                      {currentUser.initials || currentUser.name?.slice(0, 2) || 'สิ'}
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="font-bold text-sm text-slate-900 truncate">{currentUser.name}</h4>
+                      <p className="text-xs text-slate-500 truncate">
+                        {currentUser.role === 'student' ? `รหัสนักศึกษา: ${currentUser.studentId}` : (currentUser.role === 'staff' ? 'อาจารย์ประจำสาขา DIT' : 'ระบบควบคุมส่วนกลาง')}
+                      </p>
+                      <span className={`inline-block px-2 py-0.5 mt-1 text-[10px] font-bold rounded-md border ${
+                        currentUser.role === 'admin'
+                          ? 'bg-purple-50 text-purple-700 border-purple-200'
+                          : (currentUser.role === 'staff' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-blue-50 text-blue-700 border-blue-200')
+                      }`}>
+                        {currentUser.roleName || (currentUser.role === 'admin' ? 'ผู้ดูแลระบบ (Admin)' : (currentUser.role === 'staff' ? 'อาจารย์/เจ้าหน้าที่ (Staff)' : 'นักศึกษา (Student)'))}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="py-2.5 space-y-2 text-xs text-slate-600">
+                    <div className="flex items-start gap-2">
+                      <GraduationCap className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
+                      <div>
+                        <span className="font-semibold text-slate-800">{currentUser.major || STUDENT_PROFILE.major}</span>
+                        <div className="text-slate-500">{currentUser.faculty || STUDENT_PROFILE.faculty}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2 pt-1.5 border-t border-slate-100">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+                      <div>
+                        <span className="font-semibold text-slate-800">วิชา: {STUDENT_PROFILE.course}</span>
+                        <div className="text-slate-500 text-[11px]">อาจารย์ที่ปรึกษา: {STUDENT_PROFILE.instructors}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-2.5 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <button
+                      onClick={handleLogout}
+                      className="font-bold text-rose-600 hover:text-rose-800 flex items-center gap-1 hover:underline text-[11px]"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>ออกจากระบบ</span>
+                    </button>
+                    <a
+                      href="/login"
+                      className="font-bold text-blue-600 hover:text-blue-800 hover:underline text-[11px]"
+                    >
+                      สลับบัญชี / Login
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile menu hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-1.5 shadow-lg">
+          <button
+            onClick={() => {
+              setActiveTab('all');
+              setMobileMenuOpen(false);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100"
+          >
+            Home
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('browse');
+              setMobileMenuOpen(false);
+              onScrollToSection('items-feed');
+            }}
+            className="w-full text-left px-3 py-2 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-100"
+          >
+            Browse Items
+          </button>
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
+              onOpenReport();
+            }}
+            className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-blue-700 bg-blue-50"
+          >
+            <PlusCircle className="w-4 h-4 text-blue-600" />
+            <span>Report Found Item</span>
+          </button>
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
+              onScrollToSection('project-info');
+            }}
+            className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100"
+          >
+            ข้อมูลวิชา DIT204
+          </button>
+        </div>
+      )}
+    </header>
+  );
+}

@@ -160,6 +160,17 @@ export default function HeroSearch({
               >
                 🟢 พบของแล้ว (Found items)
               </button>
+
+              <button
+                onClick={() => setFilterType('RETURNED')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                  filterType === 'RETURNED'
+                    ? 'bg-sky-600 text-white shadow-sm'
+                    : 'bg-sky-50 text-sky-700 hover:bg-sky-100'
+                }`}
+              >
+                ✅ ประวัติส่งคืนแล้ว ({stats?.returnedItems ?? 0})
+              </button>
             </div>
 
             {hasActiveFilters && (

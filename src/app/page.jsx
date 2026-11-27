@@ -119,18 +119,32 @@ export default function Home() {
     fetchStats();
   }, [items]);
 
-  // Category counts
+  // Category counts (count active items on main board, or returned items when viewing RETURNED tab)
   const categoryCounts = useMemo(() => {
-    const counts = { all: items.length };
-    items.forEach((item) => {
+    const baseItems =
+      filterType === 'RETURNED'
+        ? items.filter((item) => item.status === 'RETURNED')
+        : items.filter((item) => item.status !== 'RETURNED');
+    const counts = { all: baseItems.length };
+    baseItems.forEach((item) => {
       counts[item.category] = (counts[item.category] || 0) + 1;
     });
     return counts;
-  }, [items]);
+  }, [items, filterType]);
 
   // Client-side filtering for instant UI responsiveness
+  // Items with status === 'RETURNED' are hidden from the main board unless the user selects the 'RETURNED' history tab
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
+      if (filterType === 'RETURNED') {
+        if (item.status !== 'RETURNED') return false;
+      } else {
+        if (item.status === 'RETURNED') return false;
+        if (filterType !== 'all' && item.type !== filterType) {
+          return false;
+        }
+      }
+
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         const matchesTitle = item.title.toLowerCase().includes(query);
@@ -147,10 +161,6 @@ export default function Home() {
       }
 
       if (selectedLocation !== 'all' && !item.location.includes(selectedLocation)) {
-        return false;
-      }
-
-      if (filterType !== 'all' && item.type !== filterType) {
         return false;
       }
 

@@ -58,14 +58,14 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm w-full">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-2 h-16">
+      <div className="max-w-[1440px] mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between gap-4 h-16">
           
-          {/* 1. Left: Logo & Search Icon */}
-          <div className="flex items-center gap-2 shrink-0 min-w-0">
+          {/* 1. Left Group: Logo + Navigation Links right next to it */}
+          <div className="flex items-center gap-3 xl:gap-5 min-w-0">
             <button 
               onClick={() => { setActiveTab('all'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className="flex items-center gap-2 sm:gap-2.5 group text-left focus:outline-none"
+              className="flex items-center gap-2 sm:gap-2.5 group text-left focus:outline-none shrink-0"
             >
               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform shrink-0">
                 <Search className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
@@ -84,76 +84,78 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
                 </span>
               </div>
             </button>
+
+            <div className="hidden xl:block h-6 w-px bg-slate-200 shrink-0" />
+
+            {/* Menu Links attached directly after Logo */}
+            <nav className="hidden xl:flex items-center gap-1 min-w-0">
+              <button
+                onClick={() => {
+                  setActiveTab('all');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                  activeTab === 'all'
+                    ? 'text-blue-600 bg-blue-50 font-bold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                }`}
+              >
+                Home
+              </button>
+
+              <button
+                onClick={() => {
+                  setActiveTab('browse');
+                  onScrollToSection('items-feed');
+                }}
+                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                  activeTab === 'browse'
+                    ? 'text-blue-600 bg-blue-50 font-bold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                }`}
+              >
+                Browse
+              </button>
+
+              {/* เมนูเฉพาะ Admin: สถิติ TiDB และ โครงงาน/Test Cases */}
+              {currentUser.role === 'admin' && (
+                <>
+                  <a
+                    href="/database"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 transition-all whitespace-nowrap shrink-0 border border-sky-200 ml-1"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                    <span>สถิติ &amp; ระบบ TiDB</span>
+                  </a>
+                  <a
+                    href="/project"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition-all whitespace-nowrap shrink-0 border border-indigo-200"
+                  >
+                    <GraduationCap className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                    <span>โครงงาน &amp; Test</span>
+                  </a>
+                </>
+              )}
+
+              {/* ป้ายสิทธิ์เฉพาะของ Staff */}
+              {currentUser.role === 'staff' && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 whitespace-nowrap shrink-0 ml-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                  <span>โหมดอาจารย์</span>
+                </span>
+              )}
+
+              {/* ป้ายสิทธิ์เฉพาะของ Admin */}
+              {currentUser.role === 'admin' && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200 whitespace-nowrap shrink-0">
+                  <span className="w-2 h-2 rounded-full bg-purple-600 animate-ping shrink-0"></span>
+                  <span>Admin Console</span>
+                </span>
+              )}
+            </nav>
           </div>
 
-          {/* 2. Center: Menu Links (Compact & fits comfortably inside 1280px+ without horizontal overflow) */}
-          <nav className="hidden xl:flex items-center gap-1 min-w-0">
-            <button
-              onClick={() => {
-                setActiveTab('all');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className={`px-2.5 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
-                activeTab === 'all'
-                  ? 'text-blue-600 bg-blue-50 font-bold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-              }`}
-            >
-              Home
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveTab('browse');
-                onScrollToSection('items-feed');
-              }}
-              className={`px-2.5 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
-                activeTab === 'browse'
-                  ? 'text-blue-600 bg-blue-50 font-bold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-              }`}
-            >
-              Browse
-            </button>
-
-            {/* เมนูเฉพาะ Admin: สถิติ TiDB และ โครงงาน/Test Cases */}
-            {currentUser.role === 'admin' && (
-              <>
-                <a
-                  href="/database"
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 transition-all whitespace-nowrap shrink-0 border border-sky-200"
-                >
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-                  <span>สถิติ &amp; ระบบ TiDB</span>
-                </a>
-                <a
-                  href="/project"
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition-all whitespace-nowrap shrink-0 border border-indigo-200"
-                >
-                  <GraduationCap className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                  <span>โครงงาน &amp; Test</span>
-                </a>
-              </>
-            )}
-
-            {/* ป้ายสิทธิ์เฉพาะของ Staff */}
-            {currentUser.role === 'staff' && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 whitespace-nowrap shrink-0">
-                <ShieldCheck className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                <span>โหมดอาจารย์</span>
-              </span>
-            )}
-
-            {/* ป้ายสิทธิ์เฉพาะของ Admin */}
-            {currentUser.role === 'admin' && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200 whitespace-nowrap shrink-0">
-                <span className="w-2 h-2 rounded-full bg-purple-600 animate-ping shrink-0"></span>
-                <span>Admin Console</span>
-              </span>
-            )}
-          </nav>
-
-          {/* 3. Right: Action Button & Student Profile Badge */}
+          {/* 2. Right Group: Action Button & User Profile Badge */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             {/* CTA Button (แสดงบนมือถือด้วย) */}
             <button

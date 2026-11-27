@@ -88,6 +88,35 @@ if (!globalStore.__lostFoundMockDb) {
         created_at: c.submittedAt,
       })),
     ],
+    reviews: [
+      {
+        id: 1,
+        reviewer_name: 'กุลธิดา (นักศึกษา DIT)',
+        reviewer_role: 'student',
+        rating: 5,
+        usability_score: 5,
+        comment: 'ใช้งานง่ายมาก ค้นหาของหายตามอาคารและหมวดหมู่ได้ไวกว่าการไล่ดูในกลุ่มแชทเยอะเลยค่ะ',
+        created_at: '2026-11-20 10:15:00',
+      },
+      {
+        id: 2,
+        reviewer_name: 'ศุภกิตติ์ (นักศึกษาปี 2)',
+        reviewer_role: 'student',
+        rating: 4,
+        usability_score: 5,
+        comment: 'ชอบระบบคำถามลับยืนยันความเป็นเจ้าของ รู้สึกปลอดภัยดี และอัปโหลดรูปจากมือถือได้สะดวกครับ',
+        created_at: '2026-11-21 14:30:00',
+      },
+      {
+        id: 3,
+        reviewer_name: 'อาจารย์นิษฐเนตร์ ณัฏฐกุลนันท์',
+        reviewer_role: 'staff',
+        rating: 5,
+        usability_score: 5,
+        comment: 'ระบบแยกสิทธิ์บทบาทชัดเจน ฝั่งเจ้าหน้าที่ตรวจคำขอรับคืนและปักหมุดรายการด่วนได้สะดวกมาก',
+        created_at: '2026-11-22 09:45:00',
+      },
+    ],
   };
 }
 
@@ -280,6 +309,15 @@ export async function getAllTablesData() {
       const [categories] = await p.query('SELECT id, name_th, name_en, icon FROM categories');
       const [locations] = await p.query('SELECT id, name, building, floor, room FROM locations');
       const [claims] = await p.query('SELECT id, item_id, status, verified_by, created_at FROM claims ORDER BY id DESC');
+      let reviews = [];
+      try {
+        const [revRows] = await p.query(
+          'SELECT id, reviewer_name, reviewer_role, rating, usability_score, comment, created_at FROM reviews ORDER BY id DESC'
+        );
+        reviews = revRows;
+      } catch (revErr) {
+        reviews = mockDb.reviews || [];
+      }
 
       return {
         status,
@@ -289,6 +327,7 @@ export async function getAllTablesData() {
           categories: { columns: ['id', 'name_th', 'name_en', 'icon'], rows: categories },
           locations: { columns: ['id', 'name', 'building', 'floor', 'room'], rows: locations },
           claims: { columns: ['id', 'item_id', 'status', 'verified_by', 'created_at'], rows: claims },
+          reviews: { columns: ['id', 'reviewer_name', 'reviewer_role', 'rating', 'usability_score', 'comment', 'created_at'], rows: reviews },
         },
       };
     } catch (e) {
@@ -334,6 +373,10 @@ export async function getAllTablesData() {
           verified_by,
           created_at,
         })),
+      },
+      reviews: {
+        columns: ['id', 'reviewer_name', 'reviewer_role', 'rating', 'usability_score', 'comment', 'created_at'],
+        rows: mockDb.reviews || [],
       },
     },
   };
@@ -722,4 +765,118 @@ export async function resolveDbClaim(claimId, decisionStatus, verifiedBy) {
     claims: await getDbClaims(),
     updatedItem: targetItemId ? await getDbItemById(targetItemId) : null,
   };
+}
+
+// ========================================================
+// Reviews & User Satisfaction Feedback (TiDB Table: reviews)
+// ========================================================
+export function normalizeReviewRow(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    reviewerName: row.reviewer_name ?? row.reviewerName ?? 'ผู้ใช้งานทั่วไป',
+    reviewerRole: row.reviewer_role ?? row.reviewerRole ?? 'student',
+    rating: Number(row.rating || 5),
+    usabilityScore: Number(row.usability_score ?? row.usabilityScore ?? 5),
+    comment: row.comment || '',
+    createdAt: formatDateTimeValue(row.created_at ?? row.createdAt),
+  };
+}
+
+export function computeReviewSummary(reviews) {
+  const total = reviews.length;
+  const breakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  let ratingSum = 0;
+  let usabilitySum = 0;
+
+  reviews.forEach((r) => {
+    const score = Math.min(5, Math.max(1, Math.round(r.rating || 5)));
+    breakdown[score] = (breakdown[score] || 0) + 1;
+    ratingSum += score;
+    usabilitySum += Math.min(5, Math.max(1, Math.round(r.usabilityScore || 5)));
+  });
+
+  const averageRating = total > 0 ? Number((ratingSum / total).toFixed(2)) : 0;
+  const averageUsability = total > 0 ? Number((usabilitySum / total).toFixed(2)) : 0;
+  const satisfactionPercent = total > 0 ? Number(((averageRating / 5) * 100).toFixed(1)) : 0;
+
+  return {
+    total,
+    averageRating,
+    averageUsability,
+    satisfactionPercent,
+    breakdown,
+  };
+}
+
+export async function getDbReviews() {
+  const p = getTiDbPool();
+  if (p) {
+    try {
+      const [rows] = await p.query(
+        'SELECT id, reviewer_name, reviewer_role, rating, usability_score, comment, created_at FROM reviews ORDER BY id DESC'
+      );
+      const list = (rows || []).map(normalizeReviewRow);
+      return { reviews: list, summary: computeReviewSummary(list) };
+    } catch (err) {
+      console.warn('TiDB getDbReviews fallback:', err.message);
+    }
+  }
+  const list = (mockDb.reviews || []).map(normalizeReviewRow);
+  return { reviews: list, summary: computeReviewSummary(list) };
+}
+
+export async function addDbReview({ reviewerName, reviewerRole, rating, usabilityScore, comment }) {
+  const cleanName = (reviewerName || 'ผู้ใช้งานระบบ').trim();
+  const cleanRole = ['student', 'staff', 'admin', 'guest'].includes(reviewerRole) ? reviewerRole : 'student';
+  const cleanRating = Math.min(5, Math.max(1, parseInt(rating, 10) || 5));
+  const cleanUsability = Math.min(5, Math.max(1, parseInt(usabilityScore, 10) || 5));
+  const cleanComment = (comment || '').trim();
+
+  let insertedId = Date.now();
+  const p = getTiDbPool();
+  if (p) {
+    try {
+      const [res] = await p.query(
+        `INSERT INTO reviews (reviewer_name, reviewer_role, rating, usability_score, comment)
+         VALUES (?, ?, ?, ?, ?)`,
+        [cleanName, cleanRole, cleanRating, cleanUsability, cleanComment]
+      );
+      if (res?.insertId) insertedId = res.insertId;
+    } catch (err) {
+      console.warn('TiDB addDbReview error:', err.message);
+    }
+  }
+
+  const newRow = {
+    id: insertedId,
+    reviewer_name: cleanName,
+    reviewer_role: cleanRole,
+    rating: cleanRating,
+    usability_score: cleanUsability,
+    comment: cleanComment,
+    created_at: new Date().toISOString().replace('T', ' ').slice(0, 19),
+  };
+
+  if (!mockDb.reviews) mockDb.reviews = [];
+  mockDb.reviews.unshift(newRow);
+
+  const latest = await getDbReviews();
+  return { review: normalizeReviewRow(newRow), ...latest };
+}
+
+export async function deleteDbReview(id) {
+  const p = getTiDbPool();
+  if (p) {
+    try {
+      await p.query('DELETE FROM reviews WHERE id = ?', [id]);
+    } catch (err) {
+      console.warn('TiDB deleteDbReview error:', err.message);
+    }
+  }
+
+  if (mockDb.reviews) {
+    mockDb.reviews = mockDb.reviews.filter((r) => String(r.id) !== String(id));
+  }
+  return await getDbReviews();
 }

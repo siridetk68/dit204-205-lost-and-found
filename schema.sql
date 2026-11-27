@@ -86,6 +86,17 @@ CREATE TABLE IF NOT EXISTS claims (
   FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 6. Table: reviews (ตารางเก็บความคิดเห็นและประเมินความพึงพอใจจากผู้ใช้งาน - KPI Satisfaction >= 70%)
+CREATE TABLE IF NOT EXISTS reviews (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  reviewer_name VARCHAR(100) NOT NULL,
+  reviewer_role VARCHAR(50) NOT NULL DEFAULT 'student',
+  rating TINYINT NOT NULL,
+  usability_score TINYINT NOT NULL DEFAULT 5,
+  comment TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ========================================================
 -- Initial Data Seeding for Demo & Final Presentation
 -- ========================================================
@@ -126,3 +137,9 @@ INSERT IGNORE INTO claims (id, item_id, claimant_id, claimant_name, claimant_con
 (1, 'item-005', '6804130', 'นายสิริเดช เกตานนท์', '089-xxx-4130', 'ลายเซ็นสิริเดช และรหัส 6804130 หน้าปกใน', 'APPROVED', 'อาจารย์นิษฐเนตร์ ณัฏฐกุลนันท์', '2026-11-03 14:20:00'),
 (2, 'item-002', '6804130', 'นายสิริเดช เกตานนท์', '089-xxx-4130', 'รหัสท้าย 204 ชื่อนายสิริเดช เกตานนท์ สาขาวิชา DIT', 'PENDING', NULL, '2026-11-06 14:20:00'),
 (3, 'item-004', '6804999', 'นายนภัทร วงศ์สวัสดิ์', '085-xxx-9911', 'กระเป๋า Guy Laroche ด้านในมีบัตรสะสมแต้ม Cafe Amazon 2 ใบ', 'PENDING', NULL, '2026-11-06 16:30:00');
+
+-- Seed Reviews (ตัวอย่างรีวิวและความพึงพอใจจากผู้ใช้งาน)
+INSERT IGNORE INTO reviews (id, reviewer_name, reviewer_role, rating, usability_score, comment, created_at) VALUES
+(1, 'กุลธิดา (นักศึกษา DIT)', 'student', 5, 5, 'ใช้งานง่ายมาก ค้นหาของหายตามอาคารและหมวดหมู่ได้ไวกว่าการไล่ดูในกลุ่มแชทเยอะเลยค่ะ', '2026-11-20 10:15:00'),
+(2, 'ศุภกิตติ์ (นักศึกษาปี 2)', 'student', 4, 5, 'ชอบระบบคำถามลับยืนยันความเป็นเจ้าของ รู้สึกปลอดภัยดี และอัปโหลดรูปจากมือถือได้สะดวกครับ', '2026-11-21 14:30:00'),
+(3, 'อาจารย์นิษฐเนตร์ ณัฏฐกุลนันท์', 'staff', 5, 5, 'ระบบแยกสิทธิ์บทบาทชัดเจน ฝั่งเจ้าหน้าที่ตรวจคำขอรับคืนและปักหมุดรายการด่วนได้สะดวกมาก', '2026-11-22 09:45:00');

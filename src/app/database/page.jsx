@@ -23,6 +23,7 @@ import {
   Filter,
   X,
   GraduationCap,
+  Star,
 } from 'lucide-react';
 
 export default function DatabasePage() {
@@ -74,6 +75,7 @@ export default function DatabasePage() {
     const categories = tables.categories?.rows || [];
     const locations = tables.locations?.rows || [];
     const claims = tables.claims?.rows || [];
+    const reviews = tables.reviews?.rows || [];
 
     // กรองรายการตาม Search, Category และ Type
     const items = allItems.filter((item) => {
@@ -144,6 +146,17 @@ export default function DatabasePage() {
     const approvedClaims = claims.filter((c) => c.status === 'APPROVED').length;
     const pendingClaims = claims.filter((c) => c.status === 'PENDING').length;
 
+    // สรุปรีวิวและความพึงพอใจผู้ใช้ (KPI >= 70%)
+    const totalReviews = reviews.length;
+    const avgRating =
+      totalReviews > 0
+        ? (reviews.reduce((sum, r) => sum + Number(r.rating || 0), 0) / totalReviews).toFixed(2)
+        : '0.00';
+    const satisfactionPct =
+      totalReviews > 0
+        ? ((reviews.reduce((sum, r) => sum + Number(r.rating || 0), 0) / (totalReviews * 5)) * 100).toFixed(1)
+        : '0.0';
+
     return {
       allItemsCount: allItems.length,
       categoriesList: categories,
@@ -167,6 +180,9 @@ export default function DatabasePage() {
       totalClaims: claims.length,
       approvedClaims,
       pendingClaims,
+      totalReviews,
+      avgRating,
+      satisfactionPct,
       recentItemsSummary: items,
     };
   }, [dbData, searchQuery, selectedCategory, selectedType]);
@@ -711,7 +727,7 @@ export default function DatabasePage() {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
               <div className="flex items-center justify-between text-xs font-bold text-slate-700">
                 <span>1. บัญชีผู้ใช้ (users)</span>
@@ -766,6 +782,20 @@ export default function DatabasePage() {
                 อนุมัติแล้ว {analytics.approvedClaims} • รอตรวจ {analytics.pendingClaims}
               </div>
             </div>
+
+            <Link
+              href="/reviews"
+              className="p-4 rounded-xl bg-amber-50/70 border border-amber-200 hover:bg-amber-100/70 transition-colors block"
+            >
+              <div className="flex items-center justify-between text-xs font-bold text-amber-900">
+                <span>6. รีวิว (reviews)</span>
+                <Star className="w-4 h-4 text-amber-500 fill-amber-400" />
+              </div>
+              <div className="text-2xl font-black text-amber-900 mt-2">{analytics.totalReviews} รีวิว</div>
+              <div className="text-[11px] text-amber-800 mt-1">
+                เฉลี่ย {analytics.avgRating}/5 ({analytics.satisfactionPct}%) • ดูทั้งหมด →
+              </div>
+            </Link>
           </div>
 
           {/* Masked Recent Activity Summary */}

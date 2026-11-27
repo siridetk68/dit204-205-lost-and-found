@@ -116,22 +116,24 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
               Browse
             </button>
 
-            <a
-              href="/project"
-              className="px-2.5 py-2 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all whitespace-nowrap"
-            >
-              DIT204
-            </a>
-
-            {/* สถิติและฐานข้อมูล TiDB: แสดงเฉพาะ Admin เท่านั้น (ซ่อนจาก Student และ Staff) */}
+            {/* เมนูเฉพาะ Admin: สถิติ TiDB และ โครงงาน/Test Cases */}
             {currentUser.role === 'admin' && (
-              <a
-                href="/database"
-                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 transition-all whitespace-nowrap shrink-0 border border-sky-200"
-              >
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-                <span>สถิติ &amp; ระบบ TiDB</span>
-              </a>
+              <>
+                <a
+                  href="/database"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 transition-all whitespace-nowrap shrink-0 border border-sky-200"
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                  <span>สถิติ &amp; ระบบ TiDB</span>
+                </a>
+                <a
+                  href="/project"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition-all whitespace-nowrap shrink-0 border border-indigo-200"
+                >
+                  <GraduationCap className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                  <span>โครงงาน &amp; Test</span>
+                </a>
+              </>
             )}
 
             {/* ป้ายสิทธิ์เฉพาะของ Staff */}
@@ -273,6 +275,13 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
                   <span>สถิติ &amp; ระบบ TiDB</span>
                 </a>
+                <a
+                  href="/project"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 active:scale-95 transition-all whitespace-nowrap border border-indigo-200 shadow-sm"
+                >
+                  <GraduationCap className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                  <span>โครงงาน &amp; Test</span>
+                </a>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200 whitespace-nowrap">
                   <span className="w-2 h-2 rounded-full bg-purple-600 animate-ping shrink-0"></span>
                   <span>ระบบ Admin Console</span>
@@ -323,13 +332,6 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
             <PlusCircle className="w-4 h-4 text-blue-600" />
             <span>โพสต์ประกาศ / Report Found Item</span>
           </button>
-          <a
-            href="/project"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100"
-          >
-            ข้อมูลวิชา DIT204 &amp; Test Cases
-          </a>
 
           {currentUser.role === 'admin' && (
             <div className="pt-2 mt-2 border-t border-slate-100 space-y-2">
@@ -343,6 +345,17 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
                   <span>สถิติ &amp; ระบบ TiDB</span>
                 </span>
                 <span className="text-[11px] font-semibold text-sky-600">เปิดดู →</span>
+              </a>
+              <a
+                href="/project"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200"
+              >
+                <span className="flex items-center gap-2">
+                  <GraduationCap className="w-4 h-4 text-indigo-600" />
+                  <span>ข้อมูลโครงงาน DIT204 &amp; Test Cases</span>
+                </span>
+                <span className="text-[11px] font-semibold text-indigo-600">เปิดดู →</span>
               </a>
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200">
                 <span className="w-2 h-2 rounded-full bg-purple-600 animate-ping"></span>

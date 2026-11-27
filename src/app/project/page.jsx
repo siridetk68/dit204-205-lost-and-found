@@ -5,7 +5,7 @@ import Link from 'next/link';
 import ProjectBadge from '@/components/ProjectBadge';
 import TestVerificationModal from '@/components/TestVerificationModal';
 import { INITIAL_ITEMS } from '@/data/initialItems';
-import { ArrowLeft, FlaskConical, GraduationCap, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, FlaskConical, GraduationCap, CheckCircle2, Database } from 'lucide-react';
 
 export default function ProjectPage() {
   const [items, setItems] = useState(INITIAL_ITEMS);
@@ -58,13 +58,22 @@ export default function ProjectPage() {
             </div>
           </div>
 
-          <button
-            onClick={() => setIsTestModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all whitespace-nowrap shrink-0"
-          >
-            <FlaskConical className="w-4 h-4 shrink-0" />
-            <span>รัน Test Cases (T01-T03)</span>
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <Link
+              href="/database"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 transition-all whitespace-nowrap shrink-0"
+            >
+              <Database className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+              <span>สถิติ &amp; TiDB</span>
+            </Link>
+            <button
+              onClick={() => setIsTestModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all whitespace-nowrap shrink-0"
+            >
+              <FlaskConical className="w-4 h-4 shrink-0" />
+              <span>รัน Test Cases (T01-T03)</span>
+            </button>
+          </div>
         </div>
       </header>
 

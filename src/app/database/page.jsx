@@ -22,6 +22,7 @@ import {
   Search,
   Filter,
   X,
+  GraduationCap,
 } from 'lucide-react';
 
 export default function DatabasePage() {
@@ -255,7 +256,14 @@ export default function DatabasePage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <Link
+              href="/project"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition-colors whitespace-nowrap"
+            >
+              <GraduationCap className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+              <span>โครงงาน &amp; Test</span>
+            </Link>
             <button
               onClick={() => setShowSqlSchema(!showSqlSchema)}
               className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors whitespace-nowrap"

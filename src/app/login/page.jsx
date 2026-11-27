@@ -72,11 +72,11 @@ export default function LoginPage() {
       setStudentId('6804130');
       setPassword('student2026');
     } else if (selectedRole === 'staff') {
-      setStudentId('ajarn.nittanate');
-      setPassword('staffPass2026');
+      setStudentId('Staffdit');
+      setPassword('Staffdit1234');
     } else {
-      setStudentId('admin.dit');
-      setPassword('adminSecurePass');
+      setStudentId('admindit');
+      setPassword('admin1234');
     }
   };
 
@@ -277,11 +277,11 @@ export default function LoginPage() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="font-bold text-slate-800">👩‍🏫 อาจารย์ (Staff):</span>
-                <span className="font-mono text-amber-700">ajarn.nittanate / staffPass2026</span>
+                <span className="font-mono text-amber-700">Staffdit / Staffdit1234</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="font-bold text-slate-800">🛡️ ผู้ดูแล (Admin):</span>
-                <span className="font-mono text-purple-700">admin.dit / adminSecurePass</span>
+                <span className="font-mono text-purple-700">admindit / admin1234</span>
               </div>
             </div>
           </div>

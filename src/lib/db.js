@@ -21,10 +21,10 @@ if (!globalStore.__lostFoundMockDb) {
       },
       {
         id: 2,
-        student_id: 'ajarn.nittanate',
+        student_id: 'Staffdit',
         name: 'อาจารย์นิษฐเนตร์ ณัฏฐกุลนันท์',
         email: 'nittanate.n@rsu.ac.th',
-        password_hash: 'staffPass2026',
+        password_hash: 'Staffdit1234',
         role: 'staff',
         faculty: 'วิทยาลัยนวัตกรรมดิจิทัลเทคโนโลยี',
         major: 'อาจารย์ประจำสาขาวิชา DIT',
@@ -33,10 +33,10 @@ if (!globalStore.__lostFoundMockDb) {
       },
       {
         id: 3,
-        student_id: 'admin.dit',
+        student_id: 'admindit',
         name: 'ผู้ดูแลระบบ DIT Lost & Found',
-        email: 'admin.dit@rsu.ac.th',
-        password_hash: 'adminSecurePass',
+        email: 'admindit@rsu.ac.th',
+        password_hash: 'admin1234',
         role: 'admin',
         faculty: 'สำนักงานเทคโนโลยีสารสนเทศ',
         major: 'ศูนย์ควบคุมและบริหารระบบ Lost & Found',
@@ -167,7 +167,7 @@ function enrichUserProfile(user) {
   if (role === 'staff') {
     return {
       ...user,
-      studentId: user.student_id || user.studentId || 'ajarn.nittanate',
+      studentId: user.student_id || user.studentId || 'Staffdit',
       roleName: 'อาจารย์ / เจ้าหน้าที่คณะ (Staff)',
       badge: 'อาจารย์ประจำ • DIT RSU',
       initials: user.name?.slice(0, 2) || 'นิ',
@@ -177,7 +177,7 @@ function enrichUserProfile(user) {
   if (role === 'admin') {
     return {
       ...user,
-      studentId: user.student_id || user.studentId || 'admin.dit',
+      studentId: user.student_id || user.studentId || 'admindit',
       roleName: 'ผู้ดูแลระบบสูงสุด (System Admin)',
       badge: 'Admin • IT Dept',
       initials: 'แอด',
@@ -350,12 +350,15 @@ export async function authenticateUser(studentId, password) {
       const [rows] = await p.query('SELECT * FROM users WHERE student_id = ? OR email = ? LIMIT 1', [cleanId, cleanId]);
       if (rows && rows.length > 0) {
         const user = rows[0];
-        if (
-          !cleanPass ||
-          user.password_hash === cleanPass ||
-          cleanPass === 'password123' ||
-          cleanPass === 'student2026'
-        ) {
+        const isPrivileged = user.role === 'staff' || user.role === 'admin';
+        const isValidPassword = isPrivileged
+          ? user.password_hash === cleanPass
+          : !cleanPass ||
+            user.password_hash === cleanPass ||
+            cleanPass === 'password123' ||
+            cleanPass === 'student2026';
+
+        if (isValidPassword) {
           const { password_hash, ...safeUser } = user;
           return { success: true, user: enrichUserProfile(safeUser), source: 'tidb' };
         }
@@ -366,20 +369,28 @@ export async function authenticateUser(studentId, password) {
     }
   }
 
-  const foundMock = mockDb.users.find((u) => u.student_id === cleanId || u.email.startsWith(cleanId));
+  const foundMock = mockDb.users.find((u) => u.student_id === cleanId || u.email === cleanId);
   if (foundMock) {
+    const isPrivileged = foundMock.role === 'staff' || foundMock.role === 'admin';
+    if (isPrivileged && foundMock.password_hash !== cleanPass) {
+      return { success: false, message: 'รหัสผ่านไม่ถูกต้อง' };
+    }
     const { password_hash, ...safeUser } = foundMock;
     return { success: true, user: enrichUserProfile(safeUser), source: 'mock' };
   }
 
+  // Reject wrong credentials attempting to impersonate staff/admin
+  if (/admin|staff/i.test(cleanId)) {
+    return { success: false, message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' };
+  }
+
   // Auto-provision demo student account for arbitrary student IDs during evaluation
-  const role = cleanId.includes('admin') ? 'admin' : cleanId.includes('ajarn') ? 'staff' : 'student';
   const generatedUser = {
     id: mockDb.users.length + 1,
     student_id: cleanId,
     name: cleanId === '6804130' ? 'นายสิริเดช เกตานนท์' : `นักศึกษา (${cleanId})`,
     email: `${cleanId}@rsu.ac.th`,
-    role,
+    role: 'student',
     faculty: 'วิทยาลัยนวัตกรรมดิจิทัลเทคโนโลยี',
     major: 'นวัตกรรมดิจิทัลและปัญญาประดิษฐ์',
     phone: '089-xxx-4130',

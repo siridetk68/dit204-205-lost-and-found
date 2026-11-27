@@ -109,8 +109,8 @@ INSERT IGNORE INTO locations (id, name, building, floor, room) VALUES
 -- Seed Users (ครบ 3 บทบาท)
 INSERT IGNORE INTO users (student_id, name, email, password_hash, role, major, phone) VALUES
 ('6804130', 'นายสิริเดช เกตานนท์', 's6804130@rsu.ac.th', 'student2026', 'student', 'นวัตกรรมดิจิทัลและปัญญาประดิษฐ์', '089-xxx-4130'),
-('ajarn.nittanate', 'อาจารย์นิษฐเนตร์ ณัฏฐกุลนันท์', 'nittanate.n@rsu.ac.th', 'staffPass2026', 'staff', 'อาจารย์ประจำสาขาวิชา DIT', '02-997-2200'),
-('admin.dit', 'ผู้ดูแลระบบ DIT Lost & Found', 'admin.dit@rsu.ac.th', 'adminSecurePass', 'admin', 'สำนักงานเทคโนโลยีและสารสนเทศ', '02-997-2200');
+('Staffdit', 'อาจารย์นิษฐเนตร์ ณัฏฐกุลนันท์', 'nittanate.n@rsu.ac.th', 'Staffdit1234', 'staff', 'อาจารย์ประจำสาขาวิชา DIT', '02-997-2200'),
+('admindit', 'ผู้ดูแลระบบ DIT Lost & Found', 'admindit@rsu.ac.th', 'admin1234', 'admin', 'สำนักงานเทคโนโลยีและสารสนเทศ', '02-997-2200');
 
 -- Seed Items
 INSERT IGNORE INTO items (id, title, english_title, type, status, category_id, location, date, time, description, image, secret_question, secret_clue, contact_name, contact_tel, reporter_id, claim_status, is_pinned, is_under_custody, custody_location, verified_by) VALUES

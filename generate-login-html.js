@@ -206,12 +206,15 @@ ${cssContent}
       if (role === 'student') {
         labelUser.innerText = 'รหัสนักศึกษา (Student ID)';
         userInput.value = '6804130';
+        document.getElementById('input-password').value = 'student2026';
       } else if (role === 'staff') {
         labelUser.innerText = 'ชื่อผู้ใช้อาจารย์ (Staff Username)';
-        userInput.value = 'ajarn.nittanate';
+        userInput.value = 'Staffdit';
+        document.getElementById('input-password').value = 'Staffdit1234';
       } else {
         labelUser.innerText = 'ชื่อผู้ใช้ผู้ดูแลระบบ (Admin Username)';
-        userInput.value = 'admin.dit';
+        userInput.value = 'admindit';
+        document.getElementById('input-password').value = 'admin1234';
       }
     }
 
@@ -236,7 +239,7 @@ ${cssContent}
       if (currentRole === 'staff') {
         userData = {
           name: 'อาจารย์นิษฐเนตร์ ณัฏฐกุลนันท์',
-          studentId: 'ajarn.nittanate',
+          studentId: 'Staffdit',
           role: 'staff',
           roleName: 'อาจารย์ / เจ้าหน้าที่คณะ (Staff)',
           badge: 'อาจารย์ประจำ • DIT RSU',
@@ -249,14 +252,14 @@ ${cssContent}
       } else if (currentRole === 'admin') {
         userData = {
           name: 'ผู้ดูแลระบบ DIT Lost & Found',
-          studentId: 'admin.dit',
+          studentId: 'admindit',
           role: 'admin',
           roleName: 'ผู้ดูแลระบบสูงสุด (System Admin)',
           badge: 'Admin • IT Dept',
           initials: 'แอด',
           faculty: 'สำนักงานเทคโนโลยีสารสนเทศ',
           major: 'ศูนย์ควบคุมและบริหารระบบ Lost & Found',
-          email: 'admin.dit@rsu.ac.th',
+          email: 'admindit@rsu.ac.th',
           color: 'from-purple-600 to-indigo-800'
         };
       } else {

@@ -48,14 +48,17 @@ export default function LoginPage() {
         localStorage.setItem('lost_found_user', JSON.stringify(userData));
       }
 
+      const isAdmin = userData.role === 'admin';
       setLoading(false);
       setNotification({
         type: 'success',
-        message: 'เข้าสู่ระบบสำเร็จ! กำลังนำท่านเข้าสู่ระบบ Lost & Found...',
+        message: isAdmin
+          ? 'เข้าสู่ระบบ Admin สำเร็จ! กำลังนำท่านไปยังหน้าฐานข้อมูลและสถิติ TiDB...'
+          : 'เข้าสู่ระบบสำเร็จ! กำลังนำท่านเข้าสู่ระบบ Lost & Found...',
       });
 
       setTimeout(() => {
-        router.push('/');
+        router.push(isAdmin ? '/database' : '/');
       }, 600);
     } catch (err) {
       setLoading(false);

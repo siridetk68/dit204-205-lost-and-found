@@ -270,6 +270,18 @@ export default function DatabasePage() {
               <RefreshCw className={`w-3.5 h-3.5 shrink-0 ${loading ? 'animate-spin' : ''}`} />
               <span>รีเฟรช</span>
             </button>
+            <Link
+              href="/login"
+              title="โปรไฟล์ Admin / สลับบัญชี"
+              className="inline-flex items-center gap-2 pl-1.5 pr-2.5 py-1 rounded-xl border border-purple-200 bg-purple-50 hover:bg-purple-100 transition-colors shrink-0"
+            >
+              <div className="w-7 h-7 rounded-full bg-purple-700 bg-gradient-to-tr from-purple-600 to-indigo-800 text-white font-bold text-[11px] flex items-center justify-center shadow-inner shrink-0">
+                {currentUser?.initials || 'แอด'}
+              </div>
+              <span className="hidden md:inline text-xs font-bold text-purple-900 whitespace-nowrap">
+                {currentUser?.studentId || 'admindit'}
+              </span>
+            </Link>
           </div>
         </div>
       </header>

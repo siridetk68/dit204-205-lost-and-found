@@ -287,7 +287,7 @@ ${cssContent}
         alertBox.classList.remove('hidden');
 
         setTimeout(() => {
-          window.location.href = 'index.html';
+          window.location.href = userData.role === 'admin' ? 'database.html' : 'index.html';
         }, 800);
       }, 600);
     }

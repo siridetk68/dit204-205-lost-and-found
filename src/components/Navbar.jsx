@@ -48,6 +48,14 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
     }
   };
 
+  const getAvatarGradient = (role) => {
+    if (role === 'admin') return 'bg-purple-700 bg-gradient-to-tr from-purple-600 to-indigo-800';
+    if (role === 'staff') return 'bg-amber-600 bg-gradient-to-tr from-amber-500 to-orange-700';
+    return 'bg-blue-600 bg-gradient-to-tr from-sky-500 to-blue-700';
+  };
+
+  const avatarGradient = getAvatarGradient(currentUser.role);
+
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -170,8 +178,8 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
                 title={`โปรไฟล์: ${currentUser.name}`}
               >
                 <div className="relative shrink-0">
-                  <div className={`w-8 h-8 rounded-full bg-gradient-to-tr ${currentUser.color || 'from-sky-500 to-blue-700'} text-white font-bold text-xs flex items-center justify-center shadow-inner`}>
-                    {currentUser.initials || currentUser.name?.slice(0, 2) || 'สิ'}
+                  <div className={`w-8 h-8 rounded-full ${avatarGradient} text-white font-bold text-xs flex items-center justify-center shadow-inner`}>
+                    {currentUser.initials || (currentUser.role === 'admin' ? 'AD' : currentUser.name?.slice(0, 2) || 'สิ')}
                   </div>
                   <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
                 </div>
@@ -193,8 +201,8 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
                   onClick={() => setShowProfileMenu(false)}
                 >
                   <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
-                    <div className={`w-11 h-11 rounded-full bg-gradient-to-tr ${currentUser.color || 'from-blue-600 to-blue-800'} text-white font-bold text-sm flex items-center justify-center shadow shrink-0`}>
-                      {currentUser.initials || currentUser.name?.slice(0, 2) || 'สิ'}
+                    <div className={`w-11 h-11 rounded-full ${avatarGradient} text-white font-bold text-sm flex items-center justify-center shadow shrink-0`}>
+                      {currentUser.initials || (currentUser.role === 'admin' ? 'AD' : currentUser.name?.slice(0, 2) || 'สิ')}
                     </div>
                     <div className="min-w-0">
                       <h4 className="font-bold text-sm text-slate-900 truncate">{currentUser.name}</h4>

@@ -8,11 +8,9 @@ import ItemGrid from '@/components/ItemGrid';
 import ReportModal from '@/components/ReportModal';
 import ClaimModal from '@/components/ClaimModal';
 import DetailModal from '@/components/DetailModal';
-import TestVerificationModal from '@/components/TestVerificationModal';
 import StaffClaimReviewModal from '@/components/StaffClaimReviewModal';
-import ProjectBadge from '@/components/ProjectBadge';
 import { INITIAL_ITEMS, INITIAL_CLAIMS } from '@/data/initialItems';
-import { FlaskConical, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 
 export default function Home() {
   const [items, setItems] = useState([]);
@@ -28,7 +26,6 @@ export default function Home() {
 
   // Modals state
   const [isReportOpen, setIsReportOpen] = useState(false);
-  const [isTestModalOpen, setIsTestModalOpen] = useState(false);
   const [isStaffReviewOpen, setIsStaffReviewOpen] = useState(false);
   const [staffReviewFilterItem, setStaffReviewFilterItem] = useState(null);
   const [selectedItemForClaim, setSelectedItemForClaim] = useState(null);
@@ -374,8 +371,8 @@ export default function Home() {
             counts={categoryCounts}
           />
 
-          <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto shrink-0">
-            {isStaffOrAdmin && (
+          {isStaffOrAdmin && (
+            <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto shrink-0">
               <button
                 onClick={() => {
                   setStaffReviewFilterItem(null);
@@ -387,17 +384,8 @@ export default function Home() {
                 <ShieldCheck className="w-4 h-4" />
                 <span>ตรวจสอบคำขอรับคืน ({pendingClaimsCount})</span>
               </button>
-            )}
-
-            <button
-              onClick={() => setIsTestModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-white text-indigo-700 border border-indigo-200 hover:bg-indigo-50 shadow-soft transition-all"
-              title="ทดสอบระบบอัตโนมัติสำหรับภาคผนวก ข (Evidence E03)"
-            >
-              <FlaskConical className="w-4 h-4 text-indigo-600" />
-              <span>รัน Test Cases (T01-T03)</span>
-            </button>
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Items Grid */}
@@ -415,9 +403,6 @@ export default function Home() {
           }}
           onDeleteItem={handleDeleteItem}
         />
-
-        {/* 4. Project Information / Academic Doc Showcase */}
-        <ProjectBadge />
 
       </main>
 
@@ -458,12 +443,6 @@ export default function Home() {
           setStaffReviewFilterItem(item);
           setIsStaffReviewOpen(true);
         }}
-      />
-
-      <TestVerificationModal
-        isOpen={isTestModalOpen}
-        onClose={() => setIsTestModalOpen(false)}
-        items={items}
       />
 
       <StaffClaimReviewModal

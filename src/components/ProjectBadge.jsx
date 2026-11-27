@@ -4,11 +4,11 @@ import React, { useState } from 'react';
 import { STUDENT_PROFILE } from '@/data/initialItems';
 import { BookOpen, GraduationCap, Award, CheckCircle2, ChevronDown, ChevronUp, FileText, Code2, Server } from 'lucide-react';
 
-export default function ProjectBadge() {
-  const [isExpanded, setIsExpanded] = useState(false);
+export default function ProjectBadge({ compactMargin = false }) {
+  const [isExpanded, setIsExpanded] = useState(compactMargin);
 
   return (
-    <div id="project-info" className="mt-16 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-blue-900/50">
+    <div id="project-info" className={`${compactMargin ? 'mt-0' : 'mt-16'} bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-blue-900/50`}>
       
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/10">

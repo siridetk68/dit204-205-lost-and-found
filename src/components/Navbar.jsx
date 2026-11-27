@@ -116,12 +116,12 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
               Browse
             </button>
 
-            <button
-              onClick={() => onScrollToSection('project-info')}
+            <a
+              href="/project"
               className="px-2.5 py-2 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all whitespace-nowrap"
             >
               DIT204
-            </button>
+            </a>
 
             {/* สถิติและฐานข้อมูล TiDB: แสดงเฉพาะ Admin เท่านั้น (ซ่อนจาก Student และ Staff) */}
             {currentUser.role === 'admin' && (
@@ -323,15 +323,13 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
             <PlusCircle className="w-4 h-4 text-blue-600" />
             <span>โพสต์ประกาศ / Report Found Item</span>
           </button>
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              onScrollToSection('project-info');
-            }}
-            className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100"
+          <a
+            href="/project"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100"
           >
-            ข้อมูลวิชา DIT204
-          </button>
+            ข้อมูลวิชา DIT204 &amp; Test Cases
+          </a>
 
           {currentUser.role === 'admin' && (
             <div className="pt-2 mt-2 border-t border-slate-100 space-y-2">

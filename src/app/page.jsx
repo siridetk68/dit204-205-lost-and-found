@@ -307,7 +307,7 @@ export default function Home() {
   const isStaffOrAdmin = currentUser?.role === 'staff' || currentUser?.role === 'admin';
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="min-h-screen flex flex-col bg-slate-50 overflow-x-clip">
       
       {/* 1. Navigation Bar */}
       <Navbar

@@ -54,20 +54,20 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
         <div className="flex items-center justify-between h-16 md:h-18">
           
           {/* 1. Left: Logo & Search Icon */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
             <button 
               onClick={() => { setActiveTab('all'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className="flex items-center gap-2.5 group text-left focus:outline-none"
+              className="flex items-center gap-2 sm:gap-2.5 group text-left focus:outline-none"
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform shrink-0">
-                <Search className="w-5 h-5 stroke-[2.5]" />
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform shrink-0">
+                <Search className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5 whitespace-nowrap">
-                  <span className="font-extrabold text-lg tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
+                  <span className="font-extrabold text-base sm:text-lg tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
                     Lost & Found
                   </span>
-                  <span className="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 rounded-md border border-blue-200">
+                  <span className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 rounded-md border border-blue-200">
                     IT DEPT
                   </span>
                 </div>
@@ -79,13 +79,13 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
           </div>
 
           {/* 2. Center: Menu Links (Balanced spacing, single-line text, no awkward wrapping) */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5">
             <button
               onClick={() => {
                 setActiveTab('all');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+              className={`px-2.5 xl:px-3.5 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
                 activeTab === 'all'
                   ? 'text-blue-600 bg-blue-50 font-bold'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -99,7 +99,7 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
                 setActiveTab('browse');
                 onScrollToSection('items-feed');
               }}
-              className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+              className={`px-2.5 xl:px-3.5 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
                 activeTab === 'browse'
                   ? 'text-blue-600 bg-blue-50 font-bold'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -110,15 +110,15 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
 
             <button
               onClick={onOpenReport}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition-all whitespace-nowrap"
+              className="flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-blue-600 hover:bg-slate-50 transition-all whitespace-nowrap"
             >
-              <PlusCircle className="w-4 h-4 text-blue-600" />
+              <PlusCircle className="w-4 h-4 text-blue-600 shrink-0" />
               <span>Report Found Item</span>
             </button>
 
             <button
               onClick={() => onScrollToSection('project-info')}
-              className="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all whitespace-nowrap"
+              className="px-2.5 xl:px-3.5 py-2 rounded-lg text-sm font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-all whitespace-nowrap"
             >
               ข้อมูลวิชา DIT204
             </button>
@@ -127,38 +127,38 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
             {currentUser.role === 'admin' && (
               <a
                 href="/database"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 transition-all whitespace-nowrap border border-sky-200"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 transition-all whitespace-nowrap shrink-0 border border-sky-200"
               >
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
                 <span>สถิติ &amp; ระบบ TiDB</span>
               </a>
             )}
 
             {/* ป้ายสิทธิ์เฉพาะของ Staff */}
             {currentUser.role === 'staff' && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 whitespace-nowrap shrink-0">
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                 <span>โหมดอาจารย์/เจ้าหน้าที่</span>
               </span>
             )}
 
             {/* ป้ายสิทธิ์เฉพาะของ Admin */}
             {currentUser.role === 'admin' && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200">
-                <span className="w-2 h-2 rounded-full bg-purple-600 animate-ping"></span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200 whitespace-nowrap shrink-0">
+                <span className="w-2 h-2 rounded-full bg-purple-600 animate-ping shrink-0"></span>
                 <span>ระบบ Admin Console</span>
               </span>
             )}
           </nav>
 
           {/* 3. Right: Action Button & Student Profile Badge */}
-          <div className="flex items-center gap-3 shrink-0">
-            {/* CTA Button */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* CTA Button (แสดงบนมือถือด้วย) */}
             <button
               onClick={onOpenReport}
-              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm hover:shadow transition-all whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm hover:shadow transition-all whitespace-nowrap shrink-0"
             >
-              <PlusCircle className="w-4 h-4" />
+              <PlusCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
               <span>โพสต์ประกาศ</span>
             </button>
 
@@ -260,6 +260,36 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
         </div>
       </div>
 
+      {/* Mobile / Tablet Role Quick Bar (แสดงปุ่ม TiDB & ป้ายสิทธิ์บนมือถือทันทีโดยไม่ต้องเปิดเมนู) */}
+      {(currentUser.role === 'admin' || currentUser.role === 'staff') && (
+        <div className="lg:hidden border-t border-slate-100 bg-slate-50/90 px-4 py-2">
+          <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-2">
+            {currentUser.role === 'admin' && (
+              <>
+                <a
+                  href="/database"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 active:scale-95 transition-all whitespace-nowrap border border-sky-200 shadow-sm"
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                  <span>สถิติ &amp; ระบบ TiDB</span>
+                </a>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200 whitespace-nowrap">
+                  <span className="w-2 h-2 rounded-full bg-purple-600 animate-ping shrink-0"></span>
+                  <span>ระบบ Admin Console</span>
+                </span>
+              </>
+            )}
+
+            {currentUser.role === 'staff' && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 whitespace-nowrap">
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                <span>โหมดอาจารย์/เจ้าหน้าที่</span>
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-1.5 shadow-lg">
@@ -291,7 +321,7 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
             className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-blue-700 bg-blue-50"
           >
             <PlusCircle className="w-4 h-4 text-blue-600" />
-            <span>Report Found Item</span>
+            <span>โพสต์ประกาศ / Report Found Item</span>
           </button>
           <button
             onClick={() => {
@@ -302,6 +332,35 @@ export default function Navbar({ onOpenReport, onScrollToSection, activeTab, set
           >
             ข้อมูลวิชา DIT204
           </button>
+
+          {currentUser.role === 'admin' && (
+            <div className="pt-2 mt-2 border-t border-slate-100 space-y-2">
+              <a
+                href="/database"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>สถิติ &amp; ระบบ TiDB</span>
+                </span>
+                <span className="text-[11px] font-semibold text-sky-600">เปิดดู →</span>
+              </a>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-50 text-purple-800 border border-purple-200">
+                <span className="w-2 h-2 rounded-full bg-purple-600 animate-ping"></span>
+                <span>ระบบ Admin Console</span>
+              </div>
+            </div>
+          )}
+
+          {currentUser.role === 'staff' && (
+            <div className="pt-2 mt-2 border-t border-slate-100">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+                <span>โหมดอาจารย์/เจ้าหน้าที่</span>
+              </span>
+            </div>
+          )}
         </div>
       )}
     </header>

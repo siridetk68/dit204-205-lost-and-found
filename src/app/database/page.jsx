@@ -229,45 +229,46 @@ export default function DatabasePage() {
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col">
       {/* Top Bar */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 min-h-[4rem] flex flex-wrap items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-100 transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-100 transition-colors whitespace-nowrap shrink-0"
             >
-              <ArrowLeft className="w-4 h-4" />
-              <span>กลับสู่หน้าหลัก</span>
+              <ArrowLeft className="w-4 h-4 shrink-0" />
+              <span className="sm:hidden">กลับ</span>
+              <span className="hidden sm:inline">กลับสู่หน้าหลัก</span>
             </Link>
-            <div className="h-4 w-px bg-slate-300"></div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-700 to-blue-600 text-white flex items-center justify-center shadow-sm">
+            <div className="h-4 w-px bg-slate-300 shrink-0"></div>
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-700 to-blue-600 text-white flex items-center justify-center shadow-sm shrink-0">
                 <BarChart3 className="w-4 h-4" />
               </div>
-              <div>
-                <h1 className="text-sm font-extrabold text-slate-900 leading-tight">
+              <div className="min-w-0">
+                <h1 className="text-xs sm:text-sm font-extrabold text-slate-900 leading-tight truncate">
                   Admin Analytics &amp; TiDB Dashboard
                 </h1>
-                <span className="text-[10px] text-slate-500 font-medium">
+                <span className="text-[10px] text-slate-500 font-medium hidden sm:inline-block">
                   สรุปสถิติของหาย-ของที่เจอ และภาพรวมข้อมูลระบบ (Privacy-Safe View)
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => setShowSqlSchema(!showSqlSchema)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors whitespace-nowrap"
             >
-              <FileCode2 className="w-3.5 h-3.5 text-blue-600" />
-              <span>{showSqlSchema ? 'ปิดโครงสร้าง DB' : 'โครงสร้าง DB (ER/DDL)'}</span>
+              <FileCode2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+              <span>{showSqlSchema ? 'ปิดโครงสร้าง DB' : 'โครงสร้าง DB'}</span>
             </button>
             <button
               onClick={fetchDatabase}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors whitespace-nowrap"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-              <span>รีเฟรชข้อมูล</span>
+              <RefreshCw className={`w-3.5 h-3.5 shrink-0 ${loading ? 'animate-spin' : ''}`} />
+              <span>รีเฟรช</span>
             </button>
           </div>
         </div>
